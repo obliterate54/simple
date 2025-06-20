@@ -15,7 +15,7 @@ function App() {
     holders: 1247
   });
 
-  // const [setDataLoaded] = useState(false);
+  const [dataLoaded, setDataLoaded] = useState(false);
 
   useEffect(() => {
   const fetchMarketData = async () => {
@@ -40,12 +40,11 @@ function App() {
       volume24h: coin.total_volume,
       rank: coin.market_cap_rank,
     }));
-    // setDataLoaded(true);
+    setDataLoaded(true);
   } catch (error) {
     console.error("Error fetching live data:", error);
   }
 };
-
 
   fetchMarketData(); // initial fetch
 
