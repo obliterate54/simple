@@ -19,32 +19,37 @@ function App() {
 
   useEffect(() => {
   const fetchMarketData = async () => {
-    try {
-      const response = await fetch(
-        'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=simple-coin'
-      );
-      const data = await response.json();
-      const coin = data[0];
+  try {
+    const response = await fetch(
+      'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=simple-coin'
+    );
+    const data = await response.json();
+    console.log("API response:", data); // <-- Add this line
 
-      setMarketData(prev => ({
-        ...prev,
-        price: coin.current_price,
-        change24h: coin.price_change_percentage_24h,
-        marketCap: coin.market_cap,
-        volume24h: coin.total_volume,
-        rank: coin.market_cap_rank,
-        // holders remains unchanged
-      }));
-
-      setDataLoaded(true); // <- ✅ add this to indicate data is ready
-    } catch (error) {
-      console.error("Error fetching live data:", error);
+    if (!Array.isArray(data) || data.length === 0) {
+      console.warn("No data returned from API");
+      return;
     }
-  };
+
+    const coin = data[0];
+    setMarketData(prev => ({
+      ...prev,
+      price: coin.current_price,
+      change24h: coin.price_change_percentage_24h,
+      marketCap: coin.market_cap,
+      volume24h: coin.total_volume,
+      rank: coin.market_cap_rank,
+    }));
+    setDataLoaded(true);
+  } catch (error) {
+    console.error("Error fetching live data:", error);
+  }
+};
+
 
   fetchMarketData(); // initial fetch
 
-  const interval = setInterval(fetchMarketData, 1000); // fetch every 60 seconds
+  const interval = setInterval(fetchMarketData, 500); // fetch every 60 seconds
   return () => clearInterval(interval); // cleanup on unmount
 }, []);
 
@@ -220,10 +225,15 @@ function App() {
                   </div>
                   <p className="text-gray-600 text-sm mb-2">Price</p>
                   <p className="text-2xl font-bold text-gray-800">
-                    {dataLoaded ? marketData.price.toFixed(6) : 'Loading...'} </p>
-                  <p className="text-sm font-semibold price-positive">
-                    ↗ {marketData.change24h}%
-                  </p>
+                    { marketData.price.toFixed(6)} </p>
+                  <p
+  className={`text-sm font-semibold ${
+    marketData.change24h >= 0 ? 'text-green-600' : 'text-red-600'
+  }`}
+>
+  {marketData.change24h >= 0 ? '↗' : '↘'} {marketData.change24h.toFixed(5)}%
+</p>
+
                 </div>
 
                 <div className="text-center p-4 cream-bg rounded-2xl">
@@ -232,9 +242,9 @@ function App() {
                   </div>
                   <p className="text-gray-600 text-sm mb-2">Market Cap</p>
                   <p className="text-2xl font-bold text-gray-800">
-                    {dataLoaded ? formatNumber(marketData.marketCap) : 'Loading...'} </p>
+                    {formatNumber(marketData.marketCap) } </p>
                   <p className="text-sm text-gray-500">
-                    {dataLoaded ? "Rank #{marketData.rank}" : 'Loading...'} </p>
+                    Rank #{marketData.rank} </p>
                 </div>
 
                 <div className="text-center p-4 cream-bg rounded-2xl">
@@ -243,7 +253,7 @@ function App() {
                   </div>
                   <p className="text-gray-600 text-sm mb-2">24h Volume</p>
                   <p className="text-2xl font-bold text-gray-800">
-                    {dataLoaded ? formatNumber(marketData.volume24h) : 'Loading...'} </p>
+                    {formatNumber(marketData.volume24h) } </p>
                 </div>
 
                 <div className="text-center p-4 cream-bg rounded-2xl">
