@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Menu, X, Twitter, MessageCircle, Copy, TrendingUp, Users, Zap, Target, ChevronDown, ExternalLink } from 'lucide-react';
 
 function App() {
