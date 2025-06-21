@@ -5,54 +5,45 @@ function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  // Mock market data - replace with real API calls
-  const [marketData, setMarketData] = useState({
-    price: 0.000660,
-    change24h: 32.2,
-    marketCap: 650000,
-    volume24h: 301000,
-    rank: 4198,
-    holders: 1247
-  });
+  const [marketData, setMarketData] = useState<null | {
+  price: number;
+  change24h: number;
+  marketCap: number;
+  volume24h: number;
+  rank: number;
+  holders: number;
+}>(null);
 
-  const [dataLoaded, setDataLoaded] = useState(false);
+
+  // const [dataLoaded, setDataLoaded] = useState(false);
 
   useEffect(() => {
   const fetchMarketData = async () => {
-  try {
-    const response = await fetch(
-      'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=simple-coin'
-    );
-    const data = await response.json();
-    console.log("API response:", data); // <-- Add this line
-
-    if (!Array.isArray(data) || data.length === 0) {
-      console.warn("No data returned from API");
-      return;
+    try {
+      const response = await fetch(
+        'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=simple-coin'
+      );
+      const data = await response.json();
+      if (Array.isArray(data) && data.length > 0) {
+        const coin = data[0];
+        setMarketData({
+          price: coin.current_price,
+          change24h: coin.price_change_percentage_24h,
+          marketCap: coin.market_cap,
+          volume24h: coin.total_volume,
+          rank: coin.market_cap_rank,
+          holders: 0, // optional: fetch this separately if needed
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching live data:", error);
     }
+  };
 
-    const coin = data[0];
-    setMarketData(prev => ({
-      ...prev,
-      price: coin.current_price,
-      change24h: coin.price_change_percentage_24h,
-      marketCap: coin.market_cap,
-      volume24h: coin.total_volume,
-      rank: coin.market_cap_rank,
-    }));
-    setDataLoaded(true);
-  } catch (error) {
-    console.error("Error fetching live data:", error);
-  }
-};
-
-  fetchMarketData(); // initial fetch
-
-  const interval = setInterval(fetchMarketData, 500); // fetch every 60 seconds
-  return () => clearInterval(interval); // cleanup on unmount
+  fetchMarketData();
+  const interval = setInterval(fetchMarketData, 10000); // every 60s
+  return () => clearInterval(interval);
 }, []);
-
-
 
   const contractAddress = "Chsqyzk3S4uaFdajsQNMp2FnJ4rQMzTd3ykvwyycbonk";
 
@@ -217,44 +208,72 @@ function App() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                <div className="text-center p-4 cream-bg rounded-2xl">
-                  <div className="flex items-center justify-center mb-2">
-                    <span className="text-orange-500 text-lg">💰</span>
-                  </div>
-                  <p className="text-gray-600 text-sm mb-2">Price</p>
-                  <p className="text-2xl font-bold text-gray-800">
-                    { marketData.price.toFixed(6)} </p>
-                  <p
-  className={`text-sm font-semibold ${
-    marketData.change24h >= 0 ? 'text-green-600' : 'text-red-600'
-  }`}
->
-  {marketData.change24h >= 0 ? '↗' : '↘'} {marketData.change24h.toFixed(5)}%
-</p>
+              {marketData === null ? (
+  // <div className="grid grid-cols-2 md:grid-cols-4 gap-6 animate-pulse">
+  //   {[...Array(4)].map((_, i) => (
+  //     <div key={i} className="text-center p-4 cream-bg rounded-2xl">
+  //       <div className="h-6 w-6 mx-auto bg-gray-300 rounded-full mb-2" />
+  //       <p className="h-4 w-24 mx-auto bg-gray-200 rounded mb-2" />
+  //       <p className="h-6 w-20 mx-auto bg-gray-300 rounded mb-2" />
+  //       <p className="h-4 w-16 mx-auto bg-gray-200 rounded" />
+  //     </div>
+  //   ))}
+  // </div>
+  <div className="text-center py-10 col-span-full">
+    <p className="text-gray-500 text-lg">Fetching live market data...</p>
+  </div>
+) : (
+  <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+    <div className="text-center p-4 cream-bg rounded-2xl">
+      <div className="flex items-center justify-center mb-2">
+        <span className="text-orange-500 text-lg">💰</span>
+      </div>
+      <p className="text-gray-600 text-sm mb-2">Price</p>
+      <p className="text-2xl font-bold text-gray-800">
+        {marketData.price.toFixed(6)}
+      </p>
+      <p
+        className={`text-sm font-semibold ${
+          marketData.change24h >= 0 ? 'text-green-600' : 'text-red-600'
+        }`}
+      >
+        {marketData.change24h >= 0 ? '↗' : '↘'} {marketData.change24h.toFixed(2)}%
+      </p>
+    </div>
 
-                </div>
+    <div className="text-center p-4 cream-bg rounded-2xl">
+      <div className="flex items-center justify-center mb-2">
+        <span className="text-blue-500 text-lg">📊</span>
+      </div>
+      <p className="text-gray-600 text-sm mb-2">Market Cap</p>
+      <p className="text-2xl font-bold text-gray-800">
+        {formatNumber(marketData.marketCap)}
+      </p>
+      <p className="text-sm text-gray-500">Rank #{marketData.rank}</p>
+    </div>
 
-                <div className="text-center p-4 cream-bg rounded-2xl">
-                  <div className="flex items-center justify-center mb-2">
-                    <span className="text-blue-500 text-lg">📊</span>
-                  </div>
-                  <p className="text-gray-600 text-sm mb-2">Market Cap</p>
-                  <p className="text-2xl font-bold text-gray-800">
-                    {formatNumber(marketData.marketCap) } </p>
-                  <p className="text-sm text-gray-500">
-                    Rank #{marketData.rank} </p>
-                </div>
+    <div className="text-center p-4 cream-bg rounded-2xl">
+      <div className="flex items-center justify-center mb-2">
+        <span className="text-purple-500 text-lg">👥</span>
+      </div>
+      <p className="text-gray-600 text-sm mb-2">24h Volume</p>
+      <p className="text-2xl font-bold text-gray-800">
+        {formatNumber(marketData.volume24h)}
+      </p>
+    </div>
 
-                <div className="text-center p-4 cream-bg rounded-2xl">
-                  <div className="flex items-center justify-center mb-2">
-                    <span className="text-purple-500 text-lg">👥</span>
-                  </div>
-                  <p className="text-gray-600 text-sm mb-2">24h Volume</p>
-                  <p className="text-2xl font-bold text-gray-800">
-                    {formatNumber(marketData.volume24h) } </p>
-                </div>
+    <div className="text-center p-4 cream-bg rounded-2xl">
+      <div className="flex items-center justify-center mb-2">
+        <span className="text-green-500 text-lg">⚡</span>
+      </div>
+      <p className="text-gray-600 text-sm mb-2">Blockchain</p>
+      <p className="text-2xl font-bold text-gray-800">Solana</p>
+      <p className="text-sm text-gray-500">Fast & Cheap</p>
+    </div>
+  </div>
+)}
 
+{/* 
                 <div className="text-center p-4 cream-bg rounded-2xl">
                   <div className="flex items-center justify-center mb-2">
                     <span className="text-green-500 text-lg">⚡</span>
@@ -263,7 +282,7 @@ function App() {
                   <p className="text-2xl font-bold text-gray-800">Solana</p>
                   <p className="text-sm text-gray-500">Fast & Cheap</p>
                 </div>
-              </div>
+              </div> */}
 
               <div className="mt-6 p-4 cream-bg rounded-2xl">
                 <p className="text-sm text-gray-600 mb-2">Contract Address:</p>

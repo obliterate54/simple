@@ -10,39 +10,69 @@
   box-sizing: border-box;
 }
 
-body {
-  font-family: 'Inter', sans-serif;
-  line-height: 1.6;
-  color: #333;
-  background-color: #faf8f5;
-}
-
 html {
   scroll-behavior: smooth;
 }
 
-.gradient-bg {
-  background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+body {
+  font-family: 'Inter', sans-serif;
+  line-height: 1.6;
+  color: #1f2937; /* gray-800 */
+  background-color: #fffaf0; /* pale warm yellow */
 }
 
+/* === Global Backgrounds === */
 .light-bg {
-  background-color: #faf8f5;
+  background-color: #fffaf0; /* warm off-white */
 }
 
 .cream-bg {
-  background-color: #f5f2ed;
+  background-color: #fff3d6; /* soft yellow-cream */
+}
+
+/* === Cards & Surfaces === */
+.market-card,
+.feature-card {
+  background: #ffffff;
+  border-radius: 1.5rem;
+  border: 1px solid rgba(255, 171, 0, 0.1);
+  box-shadow: 0 4px 16px rgba(255, 171, 0, 0.08);
+}
+
+/* === Accent Colors === */
+.orange-bg {
+  background-color: #f7931e; /* bright yellow-orange */
+}
+
+.orange-text {
+  color: #f7931e;
+}
+
+.orange-gradient {
+  background: linear-gradient(135deg, #ffb92e 0%, #f7931e 100%);
+}
+
+/* === Text Shadow & Effects === */
+.text-shadow {
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.hover-scale {
+  transition: transform 0.3s ease;
+}
+.hover-scale:hover {
+  transform: scale(1.05);
 }
 
 .glass-effect {
   background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .animate-float {
   animation: float 6s ease-in-out infinite;
 }
-
 @keyframes float {
   0%, 100% {
     transform: translateY(0px);
@@ -52,59 +82,36 @@ html {
   }
 }
 
-.animate-pulse-slow {
-  animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-.text-shadow {
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.hover-scale {
-  transition: transform 0.3s ease;
-}
-
-.hover-scale:hover {
-  transform: scale(1.05);
-}
-
-.market-card {
-  background: #ffffff;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  border: 1px solid rgba(255, 107, 53, 0.1);
-}
-
+/* === Status Indicators === */
 .price-positive {
-  color: #10b981;
+  color: #22c55e; /* green-500 */
 }
-
 .price-negative {
-  color: #ef4444;
+  color: #ef4444; /* red-500 */
 }
 
-.feature-card {
-  background: #ffffff;
-  border: 1px solid rgba(0, 0, 0, 0.05);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-}
-
+/* === Navigation === */
 .nav-link {
-  color: #6b7280;
+  color: #4b5563; /* gray-600 */
   transition: color 0.3s ease;
 }
-
 .nav-link:hover {
-  color: #ff6b35;
+  color: #f7931e;
 }
 
-.orange-text {
-  color: #ff6b35;
+/* === Stat Cards (optional pastel variants) === */
+.bg-stat-yellow {
+  background-color: #fff3c4; /* pale yellow */
 }
-
-.orange-bg {
-  background-color: #ff6b35;
+.bg-stat-orange {
+  background-color: #ffe7b2; /* soft orange */
 }
-
-.orange-gradient {
-  background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+.bg-stat-purple {
+  background-color: #f3e8ff;
+}
+.bg-stat-green {
+  background-color: #e7f9e7;
+}
+.bg-stat-blue {
+  background-color: #e7f5ff;
 }
